@@ -11,3 +11,5 @@ class faissMap():
 
     def search(self, items, n=10, nprobe=10):
         D, I = self.index.search(items, n, nprobe)
+
+        

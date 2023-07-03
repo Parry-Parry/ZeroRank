@@ -33,18 +33,17 @@ class ZeroRanker(transformer):
         intermediate = inputs.copy()
         
         query_lookup = inputs[['qid', 'query']].drop_duplicates()
-        query_lookup['embedding'] = self.embedding_model(query_lookup['query'].tolist(), convert_to_numpy=True)
+        query_lookup['embedding'] = self.embedding_model(query_lookup['query'].tolist(), batch_size=self.batch_size, convert_to_numpy=True)
         query_lookup = query_lookup.set_index('qid')['embedding'].to_dict()
 
         doc_lookup = inputs[['docno', self.text_attr]].drop_duplicates()
-        doc_lookup['embedding'] = self.embedding_model(doc_lookup[self.text_attr].tolist(), convert_to_numpy=True)
+        doc_lookup['embedding'] = self.embedding_model(doc_lookup[self.text_attr].tolist(), batch_size=self.batch_size, convert_to_numpy=True)
         doc_lookup = doc_lookup.set_index('docno')['embedding'].to_dict()
 
         index_queries = inputs.apply(lambda x : np.concatenate(query_lookup[x['qid']], doc_lookup[x['docno']]), axis=1)
         intermediate['context'] = self.memory_structure.search(index_queries.to_numpy(), self.k, self.nprobe)
-
         intermediate['prompt'] = intermediate.apply(lambda x : self.construct_prompt(x['query'], x[self.text_attr], x['context']), axis=1)
         
-        inputs['score'] = intermediate['prompt'].apply(lambda x : self.model(x, batch_size=self.batch_size))
+        inputs['score'] = self.model.generate(intermediate['prompt'])
 
         return inputs
