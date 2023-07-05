@@ -36,4 +36,3 @@ def encode_dataset(dataset, model, batch_size=32):
     dataset['embedding'] = dataset.apply(lambda x : np.concatenate([query_lookup[x['qid']], doc_lookup[x['docno']]]), axis=1)
 
     return dataset
-

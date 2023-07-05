@@ -56,8 +56,3 @@ class FLANT5(GenericModel):
             logits = self.model.forward(**inputs).logits
 
         return pd.Series(logits[:, 0, (self.REL, self.NREL)].softmax(dim=1)[:, 0].cpu().detatch().tolist())
-
-
-
-        
-        
