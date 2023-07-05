@@ -1,5 +1,6 @@
 from pyterrier import transformer
 import numpy as np
+from pyterrier.model import add_ranks
 
 class ZeroRanker(transformer):
     def __init__(self, 
@@ -44,6 +45,8 @@ class ZeroRanker(transformer):
         intermediate['context'] = self.memory_structure.search(index_queries.to_numpy(), self.k, self.nprobe)
         intermediate['prompt'] = intermediate.apply(lambda x : self.construct_prompt(x['query'], x[self.text_attr], x['context']), axis=1)
         
-        inputs['score'] = self.model.generate(intermediate['prompt'])
+        scores =  self.model.generate(intermediate['prompt'], batch_size=self.batch_size)
+        inputs = inputs.drop(columns=['score', 'rank'], errors='ignore').assign(score=scores)
+        inputs = add_ranks(inputs)
 
         return inputs

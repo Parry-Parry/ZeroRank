@@ -19,8 +19,8 @@ def format_dataset(corpus):
     tmp = []
 
     for row in docpairs.itertuples():
-        tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_a, 'text' : row.text_a, 'relevance' : "TRUE"})
-        tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_b, 'text' : row.text_b, 'relevance' : "FALSE"})
+        tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_a, 'text' : row.text_a, 'relevance' : "true"})
+        tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_b, 'text' : row.text_b, 'relevance' : "false"})
 
     return pd.DataFrame(tmp)
 

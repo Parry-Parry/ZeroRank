@@ -3,6 +3,7 @@ import pandas as pd
 from abc import abstractmethod
 from numpy import array_split
 import torch
+import numpy as np
 import re
 from .configs import FLAN_T5
 
@@ -12,24 +13,22 @@ class GenericModel:
     def __init__(self, 
                  generation_config : dict = None, 
                  num_return_sequences : int = None,
-                 batch_size : int = 1, 
                  device = 'cpu') -> None:
         
         if not generation_config: generation_config = FLAN_T5
         if num_return_sequences: generation_config['num_return_sequences'] = num_return_sequences
         self.generation_config = generation_config
-        self.batch_size = batch_size
         self.device = torch.device(device)
 
     @abstractmethod
     def logic(self, input : Union[str, pd.Series]) -> Union[str, List[str]]:
         raise NotImplementedError("This method must be implemented in a subclass")
     
-    def generate(self, input : Union[str, pd.Series, pd.DataFrame]) -> Union[str, pd.Series]:
+    def generate(self, input : Union[str, pd.Series, pd.DataFrame], batch_size) -> Union[np.array, pd.Series]:
         if input is isinstance(input, str):
-            return self.logic(input)
+            return self.logic(input, batch_size)
         elif isinstance(input, pd.Series):
-            return pd.concat([self.logic(chunk.tolist()) for chunk in array_split(input, len(input) // self.batch_size)])
+            return pd.concat([self.logic(chunk.tolist(), batch_size) for chunk in array_split(input, len(input) // batch_size)])
         else: 
             raise TypeError("Input must be a string or a pandas Object")
 
@@ -38,22 +37,27 @@ class FLANT5(GenericModel):
                  model_name : str, 
                  generation_config: dict = None, 
                  num_return_sequences: int = 1, 
-                 batch_size: int = 1, 
                  device = 'cpu') -> None:
-        super().__init__(generation_config, num_return_sequences, batch_size, device)
+        super().__init__(generation_config, num_return_sequences, device)
 
         from transformers import T5ForConditionalGeneration, T5TokenizerFast
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
         self.tokenizer = T5TokenizerFast.from_pretrained(model_name)
-    
-    def postprocess(self, text):
-        text = [clean(' '.join(t)) for t in text]
-        return text if len(text) > 1 else text[0]
+
+        self.REL = self.tokenizer.encode('true')[0]
+        self.NREL = self.tokenizer.encode('false')[0]
 
     def logic(self, input : Union[str, List[str]]) -> Union[str, List[str]]:
         if isinstance(input, str): input = [input]
 
-        inputs = self.tokenizer(input, padding = True, truncation = True, return_tensors = 'pt').to(self.device)
-        outputs = self.model.generate(**inputs, **self.generation_config)
-        outputs_text = self.tokenizer.batch_decode(outputs, skip_special_tokens = True)
-        return self.postprocess(outputs_text)
+        inputs = self.tokenizer(input, padding = 'longest', return_tensors = 'pt').input_ids.to(self.device)
+        inputs = inputs[:, :-1]
+        with torch.no_grad():
+            logits = self.model.forward(**inputs).logits
+
+        return pd.Series(logits[:, 0, (self.REL, self.NREL)].softmax(dim=1)[:, 0].cpu().detatch().tolist())
+
+
+
+        
+        
