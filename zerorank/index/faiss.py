@@ -15,7 +15,7 @@ class faissMap():
         return [[self.idxtotxt[i] for i in l] for l in I]
 
 
-def main(out : str, dataset : str, cut : int, dim : int, nprobe : int, nlist : int, niter : int, n : int):
+def main(out : str, sentence_encoder : str, dataset : str, cut : int, dim : int, nprobe : int, nlist : int, niter : int, n : int):
     from zerorank.index.util import *
     import pandas as pd
     pass 
