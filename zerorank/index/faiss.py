@@ -16,6 +16,8 @@ class faissMap():
 
 
 def main(out : str, dataset : str, cut : int, dim : int, nprobe : int, nlist : int, niter : int, n : int):
+    from zerorank.index.util import *
+    import pandas as pd
     pass 
 
 if __name__ == "__main__":
