@@ -24,10 +24,5 @@ def main(corpus : str,
     np.save(join(output, 'embeddings.npy'), embedding)
     json.dump(lookup, open(join(output, 'lookup.json'), 'w'))
 
-
-
-
-   
-
 if __name__ == '__main__':
     Fire(main)

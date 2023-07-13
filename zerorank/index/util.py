@@ -9,7 +9,7 @@ def construct_id_lookup(inputs):
 def construct_query_lookup(inputs):
     lookup = {}
     for row in inputs.itertuples():
-        lookup[row.Index] = {'query' : row.query, 'document_a' : row.text_a, 'document_b' : row.text_b, 'relevance' : row.relevance}
+        lookup[row.Index] = {'query' : row.query, 'document_a' : row.text_a, 'document_b' : row.text_b}
     return lookup
 
 def format_dataset(corpus, cutoff=0, keep_triples=False):

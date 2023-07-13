@@ -1,5 +1,6 @@
 import numpy as np
 import faiss
+from fire import Fire
 
 class faissMap():
     def __init__(self, index, idxtotxt) -> None:
@@ -13,4 +14,9 @@ class faissMap():
         D, I = self.index.search(items, n, nprobe)
         return [[self.idxtotxt[i] for i in l] for l in I]
 
-        
+
+def main(out : str, dataset : str, cut : int, dim : int, nprobe : int, nlist : int, niter : int, n : int):
+    pass 
+
+if __name__ == "__main__":
+    Fire(main)
