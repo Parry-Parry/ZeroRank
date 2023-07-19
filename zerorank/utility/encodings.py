@@ -34,13 +34,13 @@ def main(data : str,
     model = sentence_transformers.SentenceTransformer(model_name, device=device)
 
     q_embeddings = model(frame['query'].tolist(), batch_size=batch_size, convert_to_numpy=True)  
+    np.save(join(output, 'q_embeddings.npy'), q_embeddings)
+    del q_embeddings
     a_embeddings = model(frame['text_a'].tolist(), batch_size=batch_size, convert_to_numpy=True)
+    np.save(join(output, 'd_embeddings.npy'), a_embeddings)
+    del a_embeddings
 
     lookup = construct_query_lookup(frame)
-
-    np.save(join(output, 'q_embeddings.npy'), q_embeddings)
-    np.save(join(output, 'd_embeddings.npy'), a_embeddings)
-
     json.dump(lookup, open(join(output, 'lookup.json'), 'w'))
 
 
