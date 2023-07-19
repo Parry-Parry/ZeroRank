@@ -11,6 +11,8 @@ def main(artifact_dir : str, output : str, query_only : bool = False, quantized_
     else:
         embeddings = queries
 
+    print(embeddings.shape)
+
     idx = np.load(join(artifact_dir, 'idx.npy'))
 
     pca_matrix = faiss.PCAMatrix(embeddings.shape[-1], quantized_dim, 0, False) 
