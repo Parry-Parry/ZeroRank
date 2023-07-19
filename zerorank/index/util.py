@@ -9,36 +9,8 @@ def construct_id_lookup(inputs):
 def construct_query_lookup(inputs):
     lookup = {}
     for row in inputs.itertuples():
-        lookup[row.Index] = {'query' : row.query, 'document_a' : row.text_a, 'document_b' : row.text_b}
+        lookup[row.Index] = {'qid' : row.query_id, 'pid' : row.doc_id_a, 'nid' : row.doc_id_b}
     return lookup
-
-def format_dataset(corpus, cutoff=0, keep_triples=False):
-    docpairs = pd.DataFrame(corpus.docpairs_iter())
-    if cutoff: docpairs = docpairs.sample(n=cutoff, random_state=42)
-    docs = pd.DataFrame(corpus.docs_iter()).set_index('doc_id').text.to_dict()
-    queries = pd.DataFrame(corpus.queries_iter()).set_index('query_id').text.to_dict()
-
-    docpairs['query'] = docpairs['query_id'].apply(lambda x : queries[x])
-    docpairs['text_a'] = docpairs['doc_id_a'].apply(lambda x : docs[x])
-    docpairs['text_b'] = docpairs['doc_id_b'].apply(lambda x : docs[x])
-
-    tmp = []
-    if keep_triples:
-        for row in docpairs.itertuples():
-            tmp.append({
-                'qid' : row.query_id,
-                'query' : row.query,
-                'docno_a' : row.doc_id_a,
-                'text_a' : row.text_a,
-                'docno_b' : row.doc_id_b,
-                'text_b' : row.text_b,
-            })
-    else:  
-        for row in docpairs.itertuples():
-            tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_a, 'text' : row.text_a, 'relevance' : "true"})
-            tmp.append({'qid' : row.query_id, 'query' : row.query, 'docno' : row.doc_id_b, 'text' : row.text_b, 'relevance' : "false"})
-
-    return pd.DataFrame(tmp)
 
 def encode_triples(dataset, model, batch_size=32):
     query_lookup = dataset[['qid', 'query']].drop_duplicates()
