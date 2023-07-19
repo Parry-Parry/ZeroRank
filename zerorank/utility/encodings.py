@@ -16,11 +16,11 @@ def main(data : str,
          model_name : str = 'bert-base-uncased',
          batch_size : int = 32):
     
-    ds = irds.load(data)
+    ds = irds.load(corpus)
     queries = pd.DataFrame(ds.queries_iter()).set_index('query_id')['query'].to_dict()
     docs = pd.DataFrame(ds.docs_iter()).set_index('docno')['text'].to_dict()
 
-    frame = pd.read_csv(corpus, sep='\t', index=False, header=None, names=['query_id', 'doc_id_a', 'doc_id_b'])
+    frame = pd.read_csv(data, sep='\t', index=False, header=None, names=['query_id', 'doc_id_a', 'doc_id_b'])
     frame['query'] = frame['qid'].apply(lambda x : queries[x])
     frame['text_a'] = frame['doc_id_a'].apply(lambda x : docs[x])
 
