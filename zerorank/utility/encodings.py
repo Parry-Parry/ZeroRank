@@ -17,8 +17,8 @@ def main(data : str,
          batch_size : int = 32):
     
     ds = irds.load(corpus)
-    queries = pd.DataFrame(ds.queries_iter()).set_index('query_id')['query'].to_dict()
-    docs = pd.DataFrame(ds.docs_iter()).set_index('docno')['text'].to_dict()
+    queries = pd.DataFrame(ds.queries_iter()).set_index('query_id')['text'].to_dict()
+    docs = pd.DataFrame(ds.docs_iter()).set_index('doc_id')['text'].to_dict()
 
     frame = pd.read_csv(data, sep='\t', index=False, header=None, names=['query_id', 'doc_id_a', 'doc_id_b'])
     frame['query'] = frame['qid'].apply(lambda x : queries[x])
