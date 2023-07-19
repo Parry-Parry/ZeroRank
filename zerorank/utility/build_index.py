@@ -12,7 +12,7 @@ def main(artifact_dir : str, query_only : bool = False, nprobe : int = 10, nlist
     else:
         embeddings = queries
 
-    lookup = json.load(open(join(artifact_dir, 'lookup.json'), 'r'))
+    lookup = np.load(join(artifact_dir, 'idx.npy'))
 
     coarse_quantizer = faiss.IndexFlatL2 (quantized_dim)
     sub_index = faiss.IndexIVFPQ (coarse_quantizer, quantized_dim, ncoarse, 16, 8)

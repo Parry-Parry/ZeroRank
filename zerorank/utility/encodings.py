@@ -41,9 +41,9 @@ def main(data : str,
     del a_embeddings
 
     lookup = construct_query_lookup(frame)
-    lookup['sequential'] = frame.index.tolist()
+    sequential = np.array(frame.index.tolist())
+    np.save(join(output, 'idx.npy'), sequential)
     json.dump(lookup, open(join(output, 'lookup.json'), 'w'))
-
 
 if __name__ == '__main__':
     Fire(main)
