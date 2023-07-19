@@ -16,7 +16,7 @@ class faissMap():
 
 
 def main(out : str, sentence_encoder : str, dataset : str, cut : int, dim : int, nprobe : int, nlist : int, niter : int, n : int):
-    from zerorank.index.util import *
+    import zerorank.index.util as util
     import pandas as pd
     pass 
 

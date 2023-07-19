@@ -1,14 +1,15 @@
 from fire import Fire
-import os
 from os.path import join
+import gc
 import json
+
 import sentence_transformers
 import numpy as np
 import ir_datasets as irds
-from zerorank.index.util import construct_query_lookup
 import pandas as pd
-import gc
 import torch
+
+from zerorank.index.util import construct_query_lookup
 
 def main(data : str,
          corpus : str, 
