@@ -41,6 +41,7 @@ def main(data : str,
     del a_embeddings
 
     lookup = construct_query_lookup(frame)
+    lookup['sequential'] = frame.index.tolist()
     json.dump(lookup, open(join(output, 'lookup.json'), 'w'))
 
 
