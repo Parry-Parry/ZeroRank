@@ -20,7 +20,7 @@ def main(data : str,
     queries = pd.DataFrame(ds.queries_iter()).set_index('query_id')['text'].to_dict()
     docs = pd.DataFrame(ds.docs_iter()).set_index('doc_id')['text'].to_dict()
 
-    frame = pd.read_csv(data, sep='\t', index_col=False, header=None, names=['query_id', 'doc_id_a', 'doc_id_b'])
+    frame = pd.read_csv(data, sep='\t', index_col=False, header=None, names=['query_id', 'doc_id_a', 'doc_id_b'], dtype={'query_id': str, 'doc_id_a': str, 'doc_id_b': str})
     frame['query'] = frame['query_id'].apply(lambda x : queries[x])
     frame['text_a'] = frame['doc_id_a'].apply(lambda x : docs[x])
 
