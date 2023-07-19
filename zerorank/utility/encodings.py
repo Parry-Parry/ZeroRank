@@ -33,10 +33,10 @@ def main(data : str,
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = sentence_transformers.SentenceTransformer(model_name, device=device)
 
-    q_embeddings = model(frame['query'].tolist(), batch_size=batch_size, convert_to_numpy=True)  
+    q_embeddings = np.concatenate(model.encode(frame['query'].tolist(), show_progress_bar=True, batch_size=batch_size, convert_to_numpy=True), dim=0)
     np.save(join(output, 'q_embeddings.npy'), q_embeddings)
     del q_embeddings
-    a_embeddings = model(frame['text_a'].tolist(), batch_size=batch_size, convert_to_numpy=True)
+    a_embeddings = np.concatenate(model.encode(frame['text_a'].tolist(), show_progress_bar=True, batch_size=batch_size, convert_to_numpy=True), dim=0)
     np.save(join(output, 'd_embeddings.npy'), a_embeddings)
     del a_embeddings
 
