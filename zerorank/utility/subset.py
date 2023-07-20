@@ -5,7 +5,7 @@ from os.path import join
 
 def main(dataset : str = 'msmarco-passage',
          output_dir : str = '/',
-         cutoff : int = 1e6):
+         cutoff : int = 1000000):
     ds = irds.load(dataset)
     docpairs = pd.DataFrame(ds.docpairs_iter())
     docpairs = docpairs.drop_duplicates(subset=['query_id'])
