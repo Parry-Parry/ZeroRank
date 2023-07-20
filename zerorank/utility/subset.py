@@ -10,7 +10,7 @@ def main(dataset : str = 'msmarco-passage',
     docpairs = pd.DataFrame(ds.docpairs_iter())
     docpairs = docpairs.drop_duplicates(subset=['query_id'])
     subset = docpairs.sample(n=cutoff).reset_index(drop=True)
-    subset.to_csv(join(output_dir, f'subset{cutoff}.csv'), index=False, header=False)
+    subset.to_csv(join(output_dir, f'subset{cutoff}.tsv'), sep='\t', index=False, header=False)
 
 if __name__ == '__main__':
     Fire(main)
